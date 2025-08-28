@@ -3,346 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>순천시 인구 현황</title>
-    <!-- Tailwind CSS CDN -->
+    <title>전라남도 반려동물 등록 현황 인포그래픽</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Font Inter for modern look -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f7f3f1;
+        }
+        .infographic-card {
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .infographic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.06);
+            border-color: #f43f5e;
+        }
+        .bar-container {
+            height: 12px;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .bar {
+            background-color: #fb7185;
+            height: 100%;
+            transition: width 0.5s ease-in-out;
+            border-radius: 9999px;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            z-index: 10;
+            transform: translate(-50%, -100%);
+            white-space: nowrap;
+        }
+        .card-container:hover .tooltip {
+            opacity: 1;
         }
     </style>
 </head>
-<body class="bg-gray-100 p-4 sm:p-8 md:p-12">
-    <div class="max-w-7xl mx-auto bg-white shadow-2xl rounded-3xl p-6 sm:p-10 md:p-16 border-2 border-gray-200">
-        <header class="text-center mb-10">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight leading-tight">순천시 인구 현황 분석</h1>
-            <p class="mt-4 text-sm sm:text-base md:text-lg text-gray-500">웹 검색 및 제공된 데이터를 기반으로 한 순천시의 인구 통계입니다.</p>
+<body class="bg-[#f7f3f1] p-4 sm:p-8">
+
+    <div class="max-w-6xl mx-auto py-8">
+        <header class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800">
+                <span class="text-pink-500">전라남도</span> 반려동물 등록 현황 인포그래픽
+            </h1>
+            <p class="mt-4 text-lg text-gray-600">
+                2022년 12월 31일 기준, 시군구별 개와 고양이 등록 수 분석
+            </p>
         </header>
 
-        <!-- 총인구 및 성별 비율 섹션 -->
-        <section class="mb-10 text-center">
-            <div class="bg-gray-50 p-6 rounded-2xl shadow-inner border border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div>
-                    <h3 class="text-lg sm:text-xl font-semibold text-gray-700">총 인구수</h3>
-                    <p id="totalPopulation" class="mt-2 text-3xl sm:text-4xl font-bold text-blue-600">--</p>
-                </div>
-                <div>
-                    <h3 class="text-lg sm:text-xl font-semibold text-gray-700">남성 비율</h3>
-                    <p id="malePercentage" class="mt-2 text-3xl sm:text-4xl font-bold text-indigo-600">--</p>
-                </div>
-                <div>
-                    <h3 class="text-lg sm:text-xl font-semibold text-gray-700">여성 비율</h3>
-                    <p id="femalePercentage" class="mt-2 text-3xl sm:text-4xl font-bold text-rose-600">--</p>
-                </div>
-            </div>
-        </section>
-            
-        <!-- 도넛 그래프 섹션 -->
-        <div class="mt-12">
-            <section class="bg-gray-50 p-6 rounded-2xl shadow-inner border border-gray-200">
-                <h2 class="text-xl sm:text-2xl font-bold text-gray-700 mb-4 text-center">순천시 총 남녀 인구 비율</h2>
-                <div class="w-full h-96 flex items-center justify-center">
-                    <canvas id="doughnutChart"></canvas>
-                </div>
-            </section>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Data will be dynamically rendered here -->
         </div>
 
-        <main>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                <!-- 행정동별 인구 막대 그래프 섹션 -->
-                <section class="bg-gray-50 p-6 rounded-2xl shadow-inner border border-gray-200">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-700 mb-4 text-center">행정동별 남녀 인구수</h2>
-                    <div class="w-full h-96">
-                        <canvas id="barChart"></canvas>
-                    </div>
-                </section>
-                
-                <!-- 주요 행정동 인구 비율 파이 차트 섹션 -->
-                <section class="bg-gray-50 p-6 rounded-2xl shadow-inner border border-gray-200">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-700 mb-4 text-center">주요 행정동 인구 비율</h2>
-                    <div class="w-full h-96 flex items-center justify-center">
-                        <canvas id="pieChart"></canvas>
-                    </div>
-                </section>
+        <div class="mt-12 text-center">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">전라남도 전체 등록 현황</h2>
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8">
+                <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-200">
+                    <p class="text-sm text-gray-500">총 등록 반려동물</p>
+                    <p class="text-4xl font-extrabold text-pink-500 mt-1">96,168</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-200">
+                    <p class="text-sm text-gray-500">개 등록 수</p>
+                    <p class="text-4xl font-extrabold text-gray-800 mt-1">95,491</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-200">
+                    <p class="text-sm text-gray-500">고양이 등록 수</p>
+                    <p class="text-4xl font-extrabold text-gray-800 mt-1">677</p>
+                </div>
             </div>
-            
-            <!-- 순천시와 유사한 도시 인구 비교 섹션 -->
-            <div class="mt-12">
-                <section class="bg-gray-50 p-6 rounded-2xl shadow-inner border border-gray-200">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-700 mb-4 text-center">순천시와 인구 규모가 비슷한 도시 비교</h2>
-                    <div class="w-full h-96">
-                        <canvas id="comparisonChart"></canvas>
-                    </div>
-                </section>
-            </div>
-        </main>
+        </div>
 
-        <footer class="mt-12 text-center text-gray-400 text-xs sm:text-sm">
-            <p>&copy; 2025 인구 통계 분석. 데이터 출처: 나무위키, 행정안전부 주민등록인구통계</p>
-        </footer>
+        <!-- 전라남도 vs. 전국 평균 비교 섹션 -->
+        <div class="mt-12 text-center">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">전라남도 vs. 전국 평균 등록 현황</h2>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12 max-w-lg mx-auto">
+                <!-- 전라남도 평균 -->
+                <div class="flex flex-col items-center">
+                    <div class="bg-white rounded-full p-4 shadow-lg mb-4 w-28 h-28 flex items-center justify-center">
+                        <p class="text-4xl font-extrabold text-pink-500">4,371</p>
+                    </div>
+                    <p class="text-lg font-semibold text-gray-700">전라남도 평균</p>
+                    <p class="text-sm text-gray-500"> (시군구당 마리)</p>
+                </div>
+
+                <!-- 막대 그래프 컨테이너 -->
+                <div class="flex-1 w-full md:w-auto">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">전라남도</span>
+                        <span class="text-sm font-bold text-pink-500">4,371</span>
+                    </div>
+                    <div class="bar-container mb-6">
+                        <div class="bar" style="width: 76%; background-color: #f472b6;"></div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">전국 평균</span>
+                        <span class="text-sm font-bold text-gray-800">5,752</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="width: 100%; background-color: #6b7280;"></div>
+                    </div>
+                </div>
+
+                <!-- 전국 평균 -->
+                <div class="flex flex-col items-center hidden md:flex">
+                    <div class="bg-white rounded-full p-4 shadow-lg mb-4 w-28 h-28 flex items-center justify-center">
+                        <p class="text-4xl font-extrabold text-gray-800">5,752</p>
+                    </div>
+                    <p class="text-lg font-semibold text-gray-700">전국 평균</p>
+                    <p class="text-sm text-gray-500"> (시군구당 마리)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 출처 섹션 -->
+        <div class="mt-16 text-center text-sm text-gray-500">
+            <p><strong>데이터 출처:</strong></p>
+            <p>농림축산식품부 농림축산검역본부_행정구역별 반려동물등록 개체 수 현황_20221231.csv</p>
+            <p>행정안전부_전국 지방자치단체 현황 (2022년 12월 31일 기준)</p>
+        </div>
+
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 웹에서 찾은 순천시 읍면동별 인구 데이터 (2025년 1월 기준)
-            const suncheonDongData = [
-                { '읍면동명': '왕조1동', '남자': 21000, '여자': 22433, '계': 43433 },
-                { '읍면동명': '덕연동', '남자': 19500, '여자': 20206, '계': 39706 },
-                { '읍면동명': '해룡면 신대출장소', '남자': 16000, '여자': 16475, '계': 32475 },
-                { '읍면동명': '삼산동', '남자': 14000, '여자': 14840, '계': 28840 },
-                { '읍면동명': '해룡면 상삼출장소', '남자': 9000, '여자': 9055, '계': 18055 },
-                { '읍면동명': '도사동', '남자': 8500, '여자': 8465, '계': 16965 },
-                { '읍면동명': '왕조2동', '남자': 8000, '여자': 8890, '계': 16890 }
-            ];
+        const rawData = `시도,시군구,개등록 누계,고양이등록 누계,총 등록 누계
+        전라남도,강진군,1938,1,1939
+        전라남도,고흥군,4848,2,4850
+        전라남도,곡성군,1458,2,1460
+        전라남도,광양시,7741,7,7748
+        전라남도,구례군,1767,3,1770
+        전라남도,나주시,4755,41,4796
+        전라남도,담양군,4976,1,4977
+        전라남도,목포시,10679,11,10690
+        전라남도,무안군,2894,2,2896
+        전라남도,보성군,2648,3,2651
+        전라남도,순천시,15047,4,15051
+        전라남도,신안군,609,0,609
+        전라남도,여수시,11702,9,11711
+        전라남도,영광군,2018,1,2019
+        전라남도,영암군,2347,1,2348
+        전라남도,완도군,1253,3,1256
+        전라남도,장성군,1801,6,1807
+        전라남도,장흥군,2673,6,2679
+        전라남도,진도군,2213,1,2214
+        전라남도,함평군,2364,3,2367
+        전라남도,해남군,4869,2,4871
+        전라남도,화순군,2725,5,2730`;
 
-            // 순천시 전체 총인구 및 남녀 인구 (웹 검색 데이터 기반)
-            const totalSuncheonMale = 135759;
-            const totalSuncheonFemale = 140616;
-            const totalPopulation = 276375;
-
-            // 비율 계산 및 표시
-            document.getElementById('totalPopulation').innerText = new Intl.NumberFormat('ko-KR').format(totalPopulation) + '명';
-            document.getElementById('malePercentage').innerText = `${((totalSuncheonMale / totalPopulation) * 100).toFixed(1)}%`;
-            document.getElementById('femalePercentage').innerText = `${((totalSuncheonFemale / totalPopulation) * 100).toFixed(1)}%`;
-
-            // 막대 그래프 데이터 준비
-            const barLabels = suncheonDongData.map(d => d['읍면동명']);
-            const maleData = suncheonDongData.map(d => d['남자']);
-            const femaleData = suncheonDongData.map(d => d['여자']);
-
-            // 막대 그래프 그리기
-            const barCtx = document.getElementById('barChart').getContext('2d');
-            new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: barLabels,
-                    datasets: [
-                        {
-                            label: '남성',
-                            data: maleData,
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)', // Tailwind blue-500
-                            borderColor: 'rgba(59, 130, 246, 1)',
-                            borderWidth: 1,
-                            borderRadius: 10,
-                        },
-                        {
-                            label: '여성',
-                            data: femaleData,
-                            backgroundColor: 'rgba(244, 63, 94, 0.8)', // Tailwind rose-500
-                            borderColor: 'rgba(244, 63, 94, 1)',
-                            borderWidth: 1,
-                            borderRadius: 10,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            stacked: false,
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            stacked: false
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += new Intl.NumberFormat('ko-KR').format(context.parsed.y) + '명';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    }
-                }
+        // CSV 데이터를 파싱하여 객체 배열로 변환하는 함수
+        function parseCSV(csv) {
+            const lines = csv.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            return lines.slice(1).map(line => {
+                const values = line.split(',');
+                const obj = {};
+                headers.forEach((header, i) => {
+                    obj[header] = isNaN(Number(values[i])) ? values[i] : Number(values[i]);
+                });
+                return obj;
             });
+        }
 
-            // 파이 차트 데이터 준비
-            const pieLabels = suncheonDongData.map(d => d['읍면동명']);
-            const pieData = suncheonDongData.map(d => d['계']);
+        // 인포그래픽 카드 생성 및 렌더링 함수
+        function renderInfographic() {
+            const data = parseCSV(rawData);
+            const container = document.querySelector('.grid');
+            const maxTotal = Math.max(...data.map(d => d['총 등록 누계']));
 
-            // 파이 차트 그리기
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-            new Chart(pieCtx, {
-                type: 'pie',
-                data: {
-                    labels: pieLabels,
-                    datasets: [{
-                        data: pieData,
-                        backgroundColor: [
-                            '#4c51bf', // Indigo
-                            '#38b2ac', // Teal
-                            '#ed8936', // Orange
-                            '#ecc94b', // Yellow
-                            '#4a5568', // Gray
-                            '#718096', // Slate
-                            '#a0aec0'  // Light Gray
-                        ],
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed || 0;
-                                    const total = context.dataset.data.reduce((sum, current) => sum + current, 0);
-                                    const percentage = (value / total * 100).toFixed(1);
-                                    return `${label}: ${new Intl.NumberFormat('ko-KR').format(value)}명 (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
+            // '총 등록 누계' 기준으로 내림차순 정렬
+            data.sort((a, b) => b['총 등록 누계'] - a['총 등록 누계']);
+
+            data.forEach(item => {
+                const total = item['총 등록 누계'];
+                const dog = item['개등록 누계'];
+                const cat = item['고양이등록 누계'];
+                const dogPercent = total > 0 ? (dog / total) * 100 : 0;
+                const totalPercent = (total / maxTotal) * 100;
+
+                const cardHTML = `
+                    <div class="infographic-card p-6 flex flex-col justify-between card-container relative">
+                        <!-- 마우스를 올렸을 때 나타나는 툴팁 -->
+                        <div class="tooltip">
+                            <div>개 등록: ${dog.toLocaleString()}마리</div>
+                            <div>고양이 등록: ${cat.toLocaleString()}마리</div>
+                        </div>
+
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-700">${item['시군구']}</h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl font-bold text-pink-500">${total.toLocaleString()}</span>
+                                <span class="text-sm text-gray-500">마리</span>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full">
+                            <div class="text-sm text-gray-500 mb-1">총 등록 누계 비율</div>
+                            <div class="bar-container">
+                                <div class="bar" style="width: ${totalPercent}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
             });
-
-            // 도넛 그래프 데이터 준비
-            const doughnutData = {
-                labels: ['남성', '여성'],
-                datasets: [{
-                    data: [totalSuncheonMale, totalSuncheonFemale],
-                    backgroundColor: [
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(244, 63, 94, 0.8)'
-                    ],
-                    hoverOffset: 4
-                }]
-            };
-
-            // 도넛 그래프 그리기
-            const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
-            new Chart(doughnutCtx, {
-                type: 'doughnut',
-                data: doughnutData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed || 0;
-                                    const total = context.dataset.data.reduce((sum, current) => sum + current, 0);
-                                    const percentage = (value / total * 100).toFixed(1);
-                                    return `${label}: ${new Intl.NumberFormat('ko-KR').format(value)}명 (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // 순천시와 유사한 도시 인구 비교 데이터 (전국 기준)
-            const comparisonData = {
-                labels: ['순천시', '익산시', '경산시', '여수시'],
-                populations: [
-                    totalPopulation, // 순천시 총 인구
-                    278000, // 익산시 인구 (2024년 5월 기준)
-                    268000, // 경산시 인구 (2024년 5월 기준)
-                    268823  // 여수시 인구 (2024년 5월 기준)
-                ]
-            };
-
-            // 비교 막대 그래프 그리기
-            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
-            new Chart(comparisonCtx, {
-                type: 'bar',
-                data: {
-                    labels: comparisonData.labels,
-                    datasets: [{
-                        label: '총 인구수',
-                        data: comparisonData.populations,
-                        backgroundColor: [
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(147, 51, 234, 0.8)',
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(245, 158, 11, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(59, 130, 246, 1)',
-                            'rgba(147, 51, 234, 1)',
-                            'rgba(16, 185, 129, 1)',
-                            'rgba(245, 158, 11, 1)'
-                        ],
-                        borderWidth: 1,
-                        borderRadius: 10,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.label}: ${new Intl.NumberFormat('ko-KR').format(context.parsed.y)}명`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        });
+        }
+        
+        // 페이지 로드 시 인포그래픽 렌더링
+        window.onload = renderInfographic;
     </script>
 </body>
 </html>
