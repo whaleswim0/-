@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전라남도 반려동물 등록 현황 인포그래픽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f7f3f1;
+        }
+        .infographic-card {
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .infographic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.06);
+            border-color: #f43f5e;
+        }
+        .bar-container {
+            height: 12px;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .bar {
+            background-color: #fb7185;
+            height: 100%;
+            transition: width 0.5s ease-in-out;
+            border-radius: 9999px;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            z-index: 10;
+            transform: translate(-50%, -100%);
+            white-space: nowrap;
+        }
+        .card-container:hover .tooltip {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-[#f7f3f1] p-4 sm:p-8">
+
+    <div class="max-w-6xl mx-auto py-8">
+        <header class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800">
+                <span class="text-pink-500">전라남도</span> 반려동물 등록 현황 인포그래픽
+            </h1>
+            <p class="mt-4 text-lg text-gray-600">
+                2022년 12월 31일 기준, 시군구별 개와 고양이 등록 수 분석
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Data will be dynamically rendered here -->
+        </div>
+
+        <div class="mt-12 text-center">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">전라남도 전체 등록 현황</h2>
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8">
+                <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-200">
+                    <p class="text-sm text-gray-500">총 등록 반려동물</p>
+                    <p class="text-4xl font-extrabold text-pink-500 mt-1">96,168</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-200">
+                    <p class="text-sm text-gray-500">개 등록 수</p>
+                    <p class="text-4xl font-extrabold text-gray-800 mt-1">95,491</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-200">
+                    <p class="text-sm text-gray-500">고양이 등록 수</p>
+                    <p class="text-4xl font-extrabold text-gray-800 mt-1">677</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 전라남도 vs. 전국 평균 비교 섹션 -->
+        <div class="mt-12 text-center">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">전라남도 vs. 전국 평균 등록 현황</h2>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12 max-w-lg mx-auto">
+                <!-- 전라남도 평균 -->
+                <div class="flex flex-col items-center">
+                    <div class="bg-white rounded-full p-4 shadow-lg mb-4 w-28 h-28 flex items-center justify-center">
+                        <p class="text-4xl font-extrabold text-pink-500">4,371</p>
+                    </div>
+                    <p class="text-lg font-semibold text-gray-700">전라남도 평균</p>
+                    <p class="text-sm text-gray-500"> (시군구당 마리)</p>
+                </div>
+
+                <!-- 막대 그래프 컨테이너 -->
+                <div class="flex-1 w-full md:w-auto">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">전라남도</span>
+                        <span class="text-sm font-bold text-pink-500">4,371</span>
+                    </div>
+                    <div class="bar-container mb-6">
+                        <div class="bar" style="width: 76%; background-color: #f472b6;"></div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">전국 평균</span>
+                        <span class="text-sm font-bold text-gray-800">5,752</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="width: 100%; background-color: #6b7280;"></div>
+                    </div>
+                </div>
+
+                <!-- 전국 평균 -->
+                <div class="flex flex-col items-center hidden md:flex">
+                    <div class="bg-white rounded-full p-4 shadow-lg mb-4 w-28 h-28 flex items-center justify-center">
+                        <p class="text-4xl font-extrabold text-gray-800">5,752</p>
+                    </div>
+                    <p class="text-lg font-semibold text-gray-700">전국 평균</p>
+                    <p class="text-sm text-gray-500"> (시군구당 마리)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 출처 섹션 -->
+        <div class="mt-16 text-center text-sm text-gray-500">
+            <p><strong>데이터 출처:</strong></p>
+            <p>농림축산식품부 농림축산검역본부_행정구역별 반려동물등록 개체 수 현황_20221231.csv</p>
+            <p>행정안전부_전국 지방자치단체 현황 (2022년 12월 31일 기준)</p>
+        </div>
+
+    </div>
+
+    <script>
+        const rawData = `시도,시군구,개등록 누계,고양이등록 누계,총 등록 누계
+        전라남도,강진군,1938,1,1939
+        전라남도,고흥군,4848,2,4850
+        전라남도,곡성군,1458,2,1460
+        전라남도,광양시,7741,7,7748
+        전라남도,구례군,1767,3,1770
+        전라남도,나주시,4755,41,4796
+        전라남도,담양군,4976,1,4977
+        전라남도,목포시,10679,11,10690
+        전라남도,무안군,2894,2,2896
+        전라남도,보성군,2648,3,2651
+        전라남도,순천시,15047,4,15051
+        전라남도,신안군,609,0,609
+        전라남도,여수시,11702,9,11711
+        전라남도,영광군,2018,1,2019
+        전라남도,영암군,2347,1,2348
+        전라남도,완도군,1253,3,1256
+        전라남도,장성군,1801,6,1807
+        전라남도,장흥군,2673,6,2679
+        전라남도,진도군,2213,1,2214
+        전라남도,함평군,2364,3,2367
+        전라남도,해남군,4869,2,4871
+        전라남도,화순군,2725,5,2730`;
+
+        // CSV 데이터를 파싱하여 객체 배열로 변환하는 함수
+        function parseCSV(csv) {
+            const lines = csv.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            return lines.slice(1).map(line => {
+                const values = line.split(',');
+                const obj = {};
+                headers.forEach((header, i) => {
+                    obj[header] = isNaN(Number(values[i])) ? values[i] : Number(values[i]);
+                });
+                return obj;
+            });
+        }
+
+        // 인포그래픽 카드 생성 및 렌더링 함수
+        function renderInfographic() {
+            const data = parseCSV(rawData);
+            const container = document.querySelector('.grid');
+            const maxTotal = Math.max(...data.map(d => d['총 등록 누계']));
+
+            // '총 등록 누계' 기준으로 내림차순 정렬
+            data.sort((a, b) => b['총 등록 누계'] - a['총 등록 누계']);
+
+            data.forEach(item => {
+                const total = item['총 등록 누계'];
+                const dog = item['개등록 누계'];
+                const cat = item['고양이등록 누계'];
+                const dogPercent = total > 0 ? (dog / total) * 100 : 0;
+                const totalPercent = (total / maxTotal) * 100;
+
+                const cardHTML = `
+                    <div class="infographic-card p-6 flex flex-col justify-between card-container relative">
+                        <!-- 마우스를 올렸을 때 나타나는 툴팁 -->
+                        <div class="tooltip">
+                            <div>개 등록: ${dog.toLocaleString()}마리</div>
+                            <div>고양이 등록: ${cat.toLocaleString()}마리</div>
+                        </div>
+
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-700">${item['시군구']}</h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl font-bold text-pink-500">${total.toLocaleString()}</span>
+                                <span class="text-sm text-gray-500">마리</span>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full">
+                            <div class="text-sm text-gray-500 mb-1">총 등록 누계 비율</div>
+                            <div class="bar-container">
+                                <div class="bar" style="width: ${totalPercent}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+        }
+        
+        // 페이지 로드 시 인포그래픽 렌더링
+        window.onload = renderInfographic;
+    </script>
+</body>
+</html>
